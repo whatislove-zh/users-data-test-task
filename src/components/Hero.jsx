@@ -1,5 +1,4 @@
-import { Typography, Paper } from "@mui/material";
-import { Box } from "@mui/system";
+import { Typography, Paper, Box } from "@mui/material";
 
 import back from "../assets/pexels-alexandr-podvalny-1227513.jpeg";
 import { StyledBtn } from "./StyledBtn";
@@ -14,7 +13,7 @@ export const Hero = () => {
   return (
     <Paper
       sx={{
-        width: "1200px",
+        maxWidth: "1200px",
         height: "650px",
         position: "relative",
         background: `linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${back})`,
