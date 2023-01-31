@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Link } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const CustomButton = styled(Button)({
@@ -9,7 +9,7 @@ const CustomButton = styled(Button)({
   minWidth: "100px",
   height: "34px",
   marginLeft: "10px",
-  fontSize:"16px",
+  fontSize: "16px",
   "&:hover": {
     background: "#FFE302",
   },
@@ -20,6 +20,15 @@ const CustomButton = styled(Button)({
 });
 
 export const StyledBtn = (props) => {
-  const { title, disabled = false } = props;
-  return <CustomButton disabled={disabled}>{title}</CustomButton>;
+  const { title, disabled = false, anchor, onClick } = props;
+
+  if (anchor) {
+    return (
+      <Link href={anchor} underline="none">
+        <CustomButton disabled={disabled}>{title}</CustomButton>
+      </Link>
+    );
+  }
+
+  return <CustomButton onClick={onClick} disabled={disabled}>{title}</CustomButton>;
 };
