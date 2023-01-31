@@ -32,7 +32,7 @@ export const Hero = () => {
           {HeroInfo.title}
         </Typography>
         <Typography sx={{ mb: "32px" }}>{HeroInfo.summary}</Typography>
-        <StyledBtn title={"Sign Up"} />
+        <StyledBtn title={"Sign Up"} anchor="#putReq" />
       </Box>
     </Paper>
   );

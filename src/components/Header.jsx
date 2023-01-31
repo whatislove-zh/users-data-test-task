@@ -20,8 +20,8 @@ export const Header = () => {
             width="104px"
           />
           <Box sx={{ my: "13px" }}>
-            <StyledBtn title="Users" />
-            <StyledBtn title="Sign up" />
+            <StyledBtn title="Users" anchor="#getReq" />
+            <StyledBtn title="Sign up" anchor="#putReq" />
           </Box>
         </Toolbar>
       </AppBar>

@@ -38,7 +38,7 @@ export const SignUp = () => {
         alignItems: "center",
       }}
     >
-      <Typography variant="h4" component="h2" sx={{ mb: "50px" }}>
+      <Typography variant="h4" id="putReq" component="h2" sx={{ mb: "50px" }}>
         Working with PUT request
       </Typography>
       <Box component="form" onSubmit={handleSubmit} width="380px">
