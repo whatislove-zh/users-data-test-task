@@ -2,7 +2,7 @@ import { Grid, Typography, Box } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import data from "../data.js";
-import { StyledBtn } from "./StyledBtn.js";
+import { StyledBtn } from "./StyledBtn";
 import { UserCard } from "./UserCard";
 
 const DATA = data();
