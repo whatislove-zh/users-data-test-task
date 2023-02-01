@@ -20,7 +20,7 @@ const CustomButton = styled(Button)({
 });
 
 export const StyledBtn = (props) => {
-  const { title, disabled = false, anchor, onClick } = props;
+  const { title, disabled = false, anchor, onClick, type } = props;
 
   if (anchor) {
     return (
@@ -30,5 +30,5 @@ export const StyledBtn = (props) => {
     );
   }
 
-  return <CustomButton onClick={onClick} disabled={disabled}>{title}</CustomButton>;
+  return <CustomButton type={type} onClick={onClick} disabled={disabled}>{title}</CustomButton>;
 };
