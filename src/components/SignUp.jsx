@@ -15,11 +15,15 @@ import successImage from "../assets/success-image.svg";
 import { v4 as uuid } from "uuid";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setExpand } from "../store/expanded/expanded-actions";
 import { useForm } from "react-hook-form";
+
 import avatarDefault from "../assets/photo-cover.svg"
+
+import { storage } from "../firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const SignUp = () => {
@@ -32,8 +36,11 @@ export const SignUp = () => {
   } = useForm({
     mode: "onBlur",
   });
-  
-  const [avatarImg, setAvatar] = useState(avatarDefault)
+
+  const [percent, setPercent] = useState('0')
+
+  const [avatarFile, setAvatarFile] = useState("");
+  const [avatarImg, setAvatarImg] = useState(avatarDefault)
   const [succesRegistered, setSuccesRegistered] = useState(false);
 
   //Form state
@@ -41,13 +48,45 @@ export const SignUp = () => {
 
   const dispatch = useDispatch();
 
+
+  const uploadFile = () => {
+    const storageRef = ref(storage, `/files/${avatarFile.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, avatarFile);
+    
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        ); // update progress 
+        setPercent(percent);
+      },
+      (err) => console.log(err),
+      () => {
+        // download url
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          setAvatarImg(url);
+        });
+      }
+    );
+  }
+
+
+  useEffect(() => {
+    uploadFile()
+  }, [avatarFile])
+
+
+
+
+
+
+
   const onSubmit = async (data) => {
     const { name, email, phone, avatar } = data;
-
+    
     // const formDataAvatar = new FormData()
     // formDataAvatar.append("avatar", avatarImg)
-
-
 
     //add new user
     const collectionRef = collection(db, "users");
@@ -58,7 +97,7 @@ export const SignUp = () => {
       email: email,
       phone: phone,
       position: position,
-      avatar: avatar,
+      avatar: avatar ? avatar : avatarImg,
     });
     setSuccesRegistered(true);
     reset();
@@ -97,7 +136,7 @@ export const SignUp = () => {
             opacity: 0,
             animation: "1.5s linear 0.1s success-image",
           }}
-          onAnimationEnd={(e) => {
+          onAnimationEnd={ (e) => {
             e.target.style.opacity = 1;
           }}
         >
@@ -203,12 +242,12 @@ export const SignUp = () => {
                   width="80px"
                   disabled={errors?.avatar || watch("avatar") ? true : false}
                 >
-                  Upload
+                  Upload {percent && percent+" %"}
                   <input
                     hidden
                     accept="image/*"
                     onChange={(e) => {
-                      setAvatar(e.target.files[0]);
+                      setAvatarFile(e.target.files[0])
                     }}
                     type="file"
                   />
