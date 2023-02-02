@@ -9,16 +9,23 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { StyledBtn } from "./StyledBtn";
-
-import { v4 as uuid } from "uuid";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "../firebase";
-
-import { useState } from "react";
-
 import successImage from "../assets/success-image.svg";
 
+import { v4 as uuid } from "uuid";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setExpand } from "../store/expanded/expanded-actions";
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const SignUp = () => {
+
+ 
+
   const [succesRegistered, setSuccesRegistered] = useState(false);
 
   //Form state
@@ -27,6 +34,8 @@ export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
+  const dispatch = useDispatch();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -34,6 +43,7 @@ export const SignUp = () => {
     const collectionRef = collection(db, "users");
     await addDoc(collectionRef, {
       userId: uuid(),
+      timestamp: serverTimestamp(),
       name: name,
       email: email,
       phone: phone,
@@ -43,6 +53,7 @@ export const SignUp = () => {
     setName("");
     setPhone("");
     setEmail("");
+    dispatch(setExpand(false));
   };
 
   const positionChange = (event) => {
@@ -57,26 +68,29 @@ export const SignUp = () => {
         flexDirection: "column",
         alignItems: "center",
       }}
-      
     >
       {succesRegistered ? (
         <img
           src={successImage}
           height="650px"
           alt="success"
-          style={{ 
-            opacity:0,
+          style={{
+            opacity: 0,
             animation: "2s linear 0.2s success-image",
-           }}
-           onAnimationEnd={(e) => {setSuccesRegistered(false);}}
-           
+          }}
+          onAnimationEnd={(e) => {
+            setSuccesRegistered(false);
+          }}
         />
       ) : (
-        <Box sx={{
-          opacity:0,
-          animation: "1.5s linear 0.1s success-image",
-        }}
-        onAnimationEnd={(e) => {e.target.style.opacity=1}}
+        <Box
+          sx={{
+            opacity: 0,
+            animation: "1.5s linear 0.1s success-image",
+          }}
+          onAnimationEnd={(e) => {
+            e.target.style.opacity = 1;
+          }}
         >
           <Typography
             variant="h4"
@@ -105,12 +119,14 @@ export const SignUp = () => {
               margin="normal"
               fullWidth
               autoComplete="email"
+              
               label="Email"
               name="email"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
+              
             />
             <TextField
               margin="normal"
