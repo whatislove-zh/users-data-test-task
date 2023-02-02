@@ -7,6 +7,7 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
+  Button,
 } from "@mui/material";
 import { StyledBtn } from "./StyledBtn";
 import successImage from "../assets/success-image.svg";
@@ -17,27 +18,36 @@ import { db } from "../firebase";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setExpand } from "../store/expanded/expanded-actions";
-
-
-
+import { useForm } from "react-hook-form";
+import avatarDefault from "../assets/photo-cover.svg"
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const SignUp = () => {
-
- 
-
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onBlur",
+  });
+  
+  const [avatarImg, setAvatar] = useState(avatarDefault)
   const [succesRegistered, setSuccesRegistered] = useState(false);
 
   //Form state
   const [position, setPosition] = useState("frontend");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
 
   const dispatch = useDispatch();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const onSubmit = async (data) => {
+    const { name, email, phone, avatar } = data;
+
+    // const formDataAvatar = new FormData()
+    // formDataAvatar.append("avatar", avatarImg)
+
+
 
     //add new user
     const collectionRef = collection(db, "users");
@@ -48,11 +58,10 @@ export const SignUp = () => {
       email: email,
       phone: phone,
       position: position,
+      avatar: avatar,
     });
     setSuccesRegistered(true);
-    setName("");
-    setPhone("");
-    setEmail("");
+    reset();
     dispatch(setExpand(false));
   };
 
@@ -102,7 +111,7 @@ export const SignUp = () => {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             width="380px"
             align="center"
           >
@@ -111,59 +120,118 @@ export const SignUp = () => {
               fullWidth
               autoComplete="name"
               label="Your name"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              helperText={errors?.name ? errors.name.message : ""}
+              error={errors?.name ? true : false}
+              {...register("name", {
+                required: "Enter your name",
+                minLength: {
+                  value: 3,
+                  message: "Input at least three (3) characters",
+                },
+              })}
             />
             <TextField
               margin="normal"
               fullWidth
               autoComplete="email"
-              
               label="Email"
-              name="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              
+              helperText={errors?.email ? errors.email.message : ""}
+              error={errors?.email ? true : false}
+              {...register("email", {
+                required: "Enter your email",
+                pattern: {
+                  value: /^[\w-.-]+@([\w-]+\.)+[\w-]{2,4}$/,
+                  message: "Enter valid email",
+                },
+              })}
             />
             <TextField
               margin="normal"
               fullWidth
               autoComplete="tel"
               label="Phone"
-              name="email"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              helperText={errors?.phone ? errors.phone.message : ""}
+              error={errors?.phone ? true : false}
+              {...register("phone", {
+                required: "Enter your phone",
+                minLength: {
+                  value: 7,
+                  message: "Enter a valid phone number",
+                },
+                pattern: {
+                  value:
+                    /^((\+?\d{1,3})?[(\- ]?\d{3,5}[)\- ]?)?(\d[.\- ]?\d)+$/,
+                  message: "Enter a valid phone number",
+                },
+              })}
             />
             <TextField sx={{ display: "none" }} autoComplete="password" />
             <Box>
-              <FormControl sx={{ mt: "43px", mb: "50px", width: "100%" }}>
+              <FormControl sx={{ mt: "43px", mb: "47px", width: "100%" }}>
                 <FormLabel>Select your position</FormLabel>
                 <RadioGroup value={position} onChange={positionChange}>
                   <FormControlLabel
-                    value="frontend"
+                    value="Frontend developer"
                     control={<Radio />}
                     label="Frontend developer"
                   />
                   <FormControlLabel
-                    value="backend"
+                    value="Backend developer"
                     control={<Radio />}
                     label="Backend developer"
                   />
                   <FormControlLabel
-                    value="designer"
+                    value="Designer"
                     control={<Radio />}
                     label="Designer"
                   />
-                  <FormControlLabel value="qa" control={<Radio />} label="QA" />
+                  <FormControlLabel value="QA" control={<Radio />} label="QA" />
                 </RadioGroup>
               </FormControl>
+              <Box
+                sx={{
+                  height: "56px",
+                  display: "flex",
+                  alignItems: "flex",
+                  flexDirection: "row",
+                  mb: "50px",
+                }}
+              >
+                <Button
+                  component="label"
+                  variant="outlined"
+                  width="80px"
+                  disabled={errors?.avatar || watch("avatar") ? true : false}
+                >
+                  Upload
+                  <input
+                    hidden
+                    accept="image/*"
+                    onChange={(e) => {
+                      setAvatar(e.target.files[0]);
+                    }}
+                    type="file"
+                  />
+                </Button>
+                <TextField
+                  label="Upload your photo"
+                  fullWidth
+                  helperText={errors?.avatar ? errors.avatar.message : ""}
+                  error={errors?.avatar ? true : false}
+                  margin="none"
+                  {...register("avatar", {
+                    pattern: {
+                      value:
+                        /[(http(s)?):(www)?a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)/gi,
+                      message: "Enter a valid URL",
+                    },
+                  })}
+                />
+              </Box>
             </Box>
 
-            <StyledBtn type="submit" title="Sign up" />
-          </Box>{" "}
+            <StyledBtn type="submit" title="Sign up" disabled={!isValid} />
+          </Box>
         </Box>
       )}
     </Box>
