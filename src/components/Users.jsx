@@ -9,16 +9,12 @@ import { selectExpand } from "../store/expanded/expanded-selector.js";
 import { StyledBtn } from "./StyledBtn";
 import { UserCard } from "./UserCard";
 
-
 export const Users = () => {
   const [users, setUsers] = useState([]);
-
-  const dispatch = useDispatch();
-  
-  const expanded = useSelector(selectExpand)
-  
   const [numberOfitemsShown, setNumberOfItemsToShown] = useState(6);
-  
+  const dispatch = useDispatch();
+  const expanded = useSelector(selectExpand);
+
   const showMore = () => {
     if (numberOfitemsShown + 3 <= users.length) {
       setNumberOfItemsToShown(numberOfitemsShown + 3);
@@ -29,21 +25,19 @@ export const Users = () => {
   };
 
   const getUsers = async () => {
-    const collectionRef = collection(db, "users")
-    const queryColection = query(collectionRef, orderBy("timestamp", "desc"))
+    const collectionRef = collection(db, "users");
+    const queryColection = query(collectionRef, orderBy("timestamp", "desc"));
     const unsubscribe = onSnapshot(queryColection, (snapshot) => {
-      setUsers(snapshot.docs.map((doc) => ({...doc.data()})))
-    })
-    return unsubscribe
-  }
-
-  
+      setUsers(snapshot.docs.map((doc) => ({ ...doc.data() })));
+    });
+    return unsubscribe;
+  };
 
   useEffect(() => {
     getUsers();
-    dispatch(setExpand(false))
+    dispatch(setExpand(false));
   }, [dispatch]);
-  
+
   return (
     <Box sx={{ mb: "140px" }} align="center">
       <Typography

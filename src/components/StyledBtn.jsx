@@ -30,5 +30,9 @@ export const StyledBtn = (props) => {
     );
   }
 
-  return <CustomButton type={type} onClick={onClick} disabled={disabled}>{title}</CustomButton>;
+  return (
+    <CustomButton type={type} onClick={onClick} disabled={disabled}>
+      {title}
+    </CustomButton>
+  );
 };

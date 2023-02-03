@@ -75,9 +75,6 @@ export const SignUp = () => {
   const onSubmit = async (data) => {
     const { name, email, phone, avatar } = data;
 
-    // const formDataAvatar = new FormData()
-    // formDataAvatar.append("avatar", avatarImg)
-
     //add new user
     const collectionRef = collection(db, "users");
     await addDoc(collectionRef, {
